@@ -6,6 +6,7 @@ void key_func(window* win, int key, int action)
 	if (key == KEY_A && action == ACTION_PRESSED)
 	{
 		printf("A Key pressed");
+		set_cursor_pos(win, 60, 100);
 	}
 	else if (key == KEY_A && action == ACTION_RELEASED)
 	{
@@ -17,11 +18,14 @@ void mouse_func(window* win, int btn, int action)
 {
 	if (btn == MOUSE_BTN_LEFT && action == ACTION_PRESSED)
 	{
-		printf("mouse click");
+		int x, y;
+		get_cursor_pos(win, &x, &y);
+		printf("%i, %d", x, y);
+		set_window_title(win, "Pressed");
 	}
 	else if (btn == MOUSE_BTN_LEFT && action == ACTION_RELEASED)
 	{
-		printf("mouse up");
+		set_window_title(win, "Release");
 	}
 }
 
@@ -41,5 +45,5 @@ int main()
 		poll_events(win);
 	}
 
-	return 0;
+	destroy_window(win);
 }

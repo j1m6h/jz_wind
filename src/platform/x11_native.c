@@ -1,10 +1,10 @@
-#include "x11_window.h"
+#include "x11_native.h"
 #include "../input.h"
 #include "../window.h"
 
 const int keysym_to_key(KeySym sym);
 
-void platform_create_window(window* win)
+void native_create_window(window* win)
 {
 	win->pf.display = XOpenDisplay((char*)0);
 
@@ -21,20 +21,40 @@ void platform_create_window(window* win)
 	XSelectInput(win->pf.display, win->pf.handle, event_mask);
 }
 
-void platform_set_window_title(window* win, const char* title)
+void native_set_window_title(window* win, const char* title)
 {
 	XmbSetWMProperties(win->pf.display, win->pf.handle, 
 		title, title, NULL, 0, NULL, NULL, NULL);
 }
 
-void platform_show_window(window* win)
+void native_show_window(window* win)
 {
 	XMapWindow(win->pf.display, win->pf.handle);
 }
 
-void platform_hide_window(window* win)
+void native_hide_window(window* win)
 {
 	XUnmapWindow(win->pf.display, win->pf.handle);
+}
+
+void native_get_cursor_pos(window* win, int* x, int* y)
+{
+	Window root, child;
+	int rootx, rooty;
+	int childx, childy;
+	unsigned int mask;
+	XQueryPointer(win->pf.display, win->pf.handle, &root, &child, &rootx, &rooty, &childx, &childy, &mask);
+
+	if (x)
+		*x = childx;
+	if (y)
+		*y = childy;
+}
+
+void native_set_cursor_pos(window* win, int x, int y)
+{
+	XWarpPointer(win->pf.display, None, win->pf.handle, 0, 0, 0, 0, x, y);
+	XFlush(win->pf.display);
 }
 
 static void process_event(window* win, XEvent* xevent)
@@ -104,7 +124,7 @@ static void process_event(window* win, XEvent* xevent)
 	}
 }
 
-void platform_poll_events(window* win)
+void native_poll_events(window* win)
 {
 	XPending(win->pf.display);
 	while (QLength(win->pf.display))

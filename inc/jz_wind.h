@@ -1,11 +1,12 @@
 #ifndef JZ_WIND_H
 #define JZ_WIND_H
 
-#include <stdbool.h>
-
 typedef struct window window;
 typedef void (*keyboard_callback)(window* win, int key, int action);
 typedef void (*mouse_callback)(window* win, int btn, int action);
+
+#define JZ_FALSE 0
+#define JZ_TRUE 1
 
 enum keyboard
 {
@@ -34,8 +35,10 @@ void set_window_title(window* win, const char* title);
 void show_window(window* win);
 void hide_window(window* win);
 void get_window_size(window* win, int* width, int* height);
-bool window_is_open(window* win);
+int window_is_open(window* win);
 void poll_events(window* win);
+void get_cursor_pos(window* win, int* x, int* y);
+void set_cursor_pos(window* win, int x, int y);
 keyboard_callback set_keyboard_callback(window* win, keyboard_callback callback);
 mouse_callback set_mouse_callback(window* win, mouse_callback callback);
 #endif
