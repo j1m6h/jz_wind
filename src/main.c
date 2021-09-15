@@ -42,7 +42,7 @@ int main()
 
 	while (window_is_open(win))
 	{
-		poll_events(win);
+		wait_events(win);
 	}
 
 	destroy_window(win);

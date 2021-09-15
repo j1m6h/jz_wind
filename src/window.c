@@ -1,3 +1,4 @@
+#include <string.h>
 #include <malloc.h>
 #include "natives.h"
 #include "window.h"
@@ -13,14 +14,19 @@ window* create_window(const char* title, int width, int height)
     	return win;
 }
 
-void destroy_window(window* win)
+int window_is_open(window* win)
 {
-    	free(win);
+	return win->is_open;
 }
 
-void set_window_title(window* win, const char* title)
+void destroy_window(window* win)
 {
-	native_set_window_title(win, title);
+	/* clear callbacks */
+	memset(&win->callbacks, 0, sizeof(win->callbacks));
+	/* destroy native window */
+	native_destroy_window(win);
+	/* destroy logical user window */
+    	free(win);
 }
 
 void show_window(window* win)
@@ -33,18 +39,28 @@ void hide_window(window* win)
 	native_hide_window(win);
 }
 
+void set_window_title(window* win, const char* title)
+{
+	native_set_window_title(win, title);
+}
+
 void get_window_size(window* win, int* width, int* height)
 {
 	*width = win->width;
 	*height = win->height;
 }
 
-int window_is_open(window* win)
+void set_window_size(window* win, int width, int height)
 {
-	return win->is_open;
+	native_set_window_size(win, width, height);
 }
 
 void poll_events(window* win)
 {
 	native_poll_events(win);
+}
+
+void wait_events(window* win)
+{
+	native_wait_events(win);
 }

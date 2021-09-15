@@ -1,13 +1,15 @@
 #ifndef JZ_WIND_H
 #define JZ_WIND_H
 
-typedef struct window window;
-typedef void (*keyboard_callback)(window* win, int key, int action);
+typedef struct window window; typedef void (*keyboard_callback)(window* win, int key, int action);
 typedef void (*mouse_callback)(window* win, int btn, int action);
+typedef void (*window_close_callback)(window* win);
 
-#define JZ_FALSE 0
+/* just a little sugar (: */
 #define JZ_TRUE 1
+#define JZ_FALSE 0
 
+/* keyboard keys */
 enum keyboard
 {
 	KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I,
@@ -16,6 +18,7 @@ enum keyboard
 	KEY_UNKNOWN
 };
 
+/* mouse btns */
 enum mouse
 {
 	MOUSE_BTN_LEFT,
@@ -23,6 +26,7 @@ enum mouse
 	MOUSE_BTN_RIGHT
 };
 
+/* actions, used to detect key and mouse btn state */
 enum actions
 {
 	ACTION_PRESSED,
@@ -30,15 +34,21 @@ enum actions
 };
 
 window* create_window(const char* title, int width, int height);
+int window_is_open(window* win);
 void destroy_window(window* win);
-void set_window_title(window* win, const char* title);
 void show_window(window* win);
 void hide_window(window* win);
+void set_window_title(window* win, const char* title);
 void get_window_size(window* win, int* width, int* height);
-int window_is_open(window* win);
+void set_window_size(window* win, int width, int height);
+
 void poll_events(window* win);
+void wait_events(window* win);
+
 void get_cursor_pos(window* win, int* x, int* y);
 void set_cursor_pos(window* win, int x, int y);
+
+/* allow the user to handle event input */
 keyboard_callback set_keyboard_callback(window* win, keyboard_callback callback);
 mouse_callback set_mouse_callback(window* win, mouse_callback callback);
 #endif

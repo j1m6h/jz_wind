@@ -16,6 +16,7 @@ struct window
 	struct {
 		keyboard_callback key;
 		mouse_callback mouse_btn;
+		window_close_callback close;
 	} callbacks;
 };
 #endif

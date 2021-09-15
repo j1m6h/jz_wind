@@ -1,6 +1,7 @@
 #include "input.h"
 #include "natives.h"
 #include "window.h"
+#include "../inc/jz_wind.h"
 
 /* swap provided pointers, particularily our callbacks */
 #define SWAP_POINTERS(x, y)	\
@@ -21,6 +22,13 @@ void input_mouse_click(window* win, int btn, int action)
 {
 	if (win->callbacks.mouse_btn)
 		win->callbacks.mouse_btn(win, btn, action);
+}
+
+void input_window_close_req(window* win)
+{
+	win->is_open = JZ_FALSE;
+	if (win->callbacks.close)
+		win->callbacks.close(win);
 }
 
 void get_cursor_pos(window* win, int* x, int* y)

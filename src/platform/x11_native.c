@@ -1,8 +1,19 @@
-#include "x11_native.h"
+#include <sys/select.h>
 #include "../input.h"
+#include "../natives.h"
 #include "../window.h"
 
 const int keysym_to_key(KeySym sym);
+
+static void set_protocols(window* win)
+{
+	Atom wm_protocols = XInternAtom(win->pf.display, "WM_PROTOCOLS", False);
+	Atom wm_delete = XInternAtom(win->pf.display, "WM_DELETE_WINDOW", False);
+
+	/* make sure to allow accepting the window managers delete message */
+	XChangeProperty(win->pf.display, win->pf.handle, wm_protocols, XA_ATOM, 32, PropModeReplace,
+			(const unsigned char*)&wm_delete, 1);
+}
 
 void native_create_window(window* win)
 {
@@ -19,6 +30,30 @@ void native_create_window(window* win)
         	StructureNotifyMask | SubstructureNotifyMask;
 
 	XSelectInput(win->pf.display, win->pf.handle, event_mask);
+	set_protocols(win);
+}
+
+void native_destroy_window(window* win)
+{
+	if (win->pf.handle)
+	{
+		XDestroyWindow(win->pf.display, win->pf.handle);
+		win->pf.handle = (Window)0;
+	}
+
+	XCloseDisplay(win->pf.display);
+}
+
+void native_show_window(window* win)
+{
+	XMapWindow(win->pf.display, win->pf.handle);
+	XFlush(win->pf.display);
+}
+
+void native_hide_window(window* win)
+{
+	XUnmapWindow(win->pf.display, win->pf.handle);
+	XFlush(win->pf.display);
 }
 
 void native_set_window_title(window* win, const char* title)
@@ -27,14 +62,10 @@ void native_set_window_title(window* win, const char* title)
 		title, title, NULL, 0, NULL, NULL, NULL);
 }
 
-void native_show_window(window* win)
+void native_set_window_size(window* win, int width, int height)
 {
-	XMapWindow(win->pf.display, win->pf.handle);
-}
-
-void native_hide_window(window* win)
-{
-	XUnmapWindow(win->pf.display, win->pf.handle);
+	XResizeWindow(win->pf.display, win->pf.handle, width, height);
+	XFlush(win->pf.display);
 }
 
 void native_get_cursor_pos(window* win, int* x, int* y)
@@ -65,6 +96,19 @@ static void process_event(window* win, XEvent* xevent)
 
 	switch (xevent->type)
 	{
+		/* usually this is where we can communicate with the window manager
+		 * if we want to handle a close event, this is where we would do so.
+		 * X has no official support for handling window close events, that's
+		 * the window managers job */ 
+		case ClientMessage:
+		{
+			Atom wm_delete = XInternAtom(win->pf.display, "WM_DELETE_WINDOW", False);
+			XSetWMProtocols(win->pf.display, win->pf.handle, &wm_delete, True);
+
+			if (xevent->xclient.data.l[0] == wm_delete)
+				input_window_close_req(win);
+			break;
+		}
 		case KeyPress:
 		{
 			KeySym sym = XLookupKeysym(&xevent->xkey, 1);
@@ -78,7 +122,7 @@ static void process_event(window* win, XEvent* xevent)
 			const int key = keysym_to_key(sym);
 
 			/* by default key repeat events are not a thing in X, if a key is held it will arrive as "KeyPress/KeyRelease" pair
-			all we want is KeyPress, so we will filter out the repeated KeyRelease events */
+			 * all we want is KeyPress, so we will filter out the repeated KeyRelease events */
 			if (XEventsQueued(win->pf.display, 1))
 			{
 				XEvent next;
@@ -135,6 +179,38 @@ void native_poll_events(window* win)
 	}
 
 	XFlush(win->pf.display);
+}
+
+static int wait_for_event(Display* display)
+{
+	fd_set fds;
+	const int fd = ConnectionNumber(display);
+	int count = fd + 1;
+
+	for (;;)
+	{
+		FD_ZERO(&fds);
+		FD_SET(fd, &fds);
+
+		struct timeval tv;
+		tv.tv_usec = 0;
+		tv.tv_sec = 1;
+
+		const int res = select(count, &fds, NULL, NULL, &tv);
+
+		if (res > 0)
+			return 1;
+	}
+
+	return 0;
+}
+
+void native_wait_events(window* win)
+{
+	while (!XPending(win->pf.display))
+		wait_for_event(win->pf.display);
+
+	native_poll_events(win);
 }
 
 /* much more simple compared to GLFW's method createKeyTables */
