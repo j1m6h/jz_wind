@@ -132,9 +132,7 @@ static void process_event(window* win, XEvent* xevent)
 				{
 					/* if the timestamps of the KeyPress/KeyRelease events don't match */
 					if ((next.xkey.time - xevent->xkey.time) < 20)
-					{
 						return;
-					}
 				}
 			}
 
