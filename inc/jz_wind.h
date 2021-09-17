@@ -1,6 +1,11 @@
 #ifndef JZ_WIND_H
 #define JZ_WIND_H
 
+#ifdef JZ_INC_VK
+#include <stdint.h>
+#include <vulkan/vulkan.h>
+#endif
+
 typedef struct window window; typedef void (*keyboard_callback)(window* win, int key, int action);
 typedef void (*mouse_callback)(window* win, int btn, int action);
 typedef void (*window_close_callback)(window* win);
@@ -47,6 +52,12 @@ void wait_events(window* win);
 
 void get_cursor_pos(window* win, int* x, int* y);
 void set_cursor_pos(window* win, int x, int y);
+
+#ifdef JZ_INC_VK
+const char** get_required_instance_exts(uint32_t* count);
+VkResult create_vulkan_surface(VkInstance instance, window* win, 
+	const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
+#endif
 
 /* allow the user to handle event input */
 keyboard_callback set_keyboard_callback(window* win, keyboard_callback callback);

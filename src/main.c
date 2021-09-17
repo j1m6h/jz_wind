@@ -1,3 +1,4 @@
+#define JZ_INC_VK
 #include "../inc/jz_wind.h"
 #include <stdio.h>
 
@@ -36,9 +37,32 @@ int main()
 	set_keyboard_callback(win, key_func);
 	set_mouse_callback(win, mouse_func);
 
-	int width, height;
-	get_window_size(win, &width, &height);
-	printf("Window Width : %i\nWindow Height : %i\n", width, height);
+	VkResult result;
+	VkInstance instance;
+	uint32_t count = 0;
+	const char** exts;
+	VkInstanceCreateInfo create_info;
+	PFN_vkCreateInstance my_create;
+
+	my_create = (PFN_vkCreateInstance)
+		vkGetInstanceProcAddr(instance, "vkCreateInstance");
+
+	create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	create_info.pApplicationInfo = NULL;
+	create_info.pNext = NULL;
+	create_info.flags = 0;
+	
+	exts = get_required_instance_exts(&count);
+	set_window_title(win, exts[1]);
+
+	create_info.enabledExtensionCount = count;
+	create_info.ppEnabledExtensionNames = exts;
+	create_info.enabledLayerCount = 0;
+
+	result = my_create(&create_info, NULL, &instance);
+	if (result == VK_SUCCESS)
+	{
+	}
 
 	while (window_is_open(win))
 	{

@@ -1,7 +1,13 @@
+#include <stdint.h>
+#include <string.h>
 #include <sys/select.h>
+#include "../config.h"
 #include "../input.h"
 #include "../natives.h"
 #include "../window.h"
+/* vulkan_xlib.h must be included after Xlib.h */
+#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_xlib.h>
 
 const int keysym_to_key(KeySym sym);
 
@@ -86,6 +92,39 @@ void native_set_cursor_pos(window* win, int x, int y)
 {
 	XWarpPointer(win->pf.display, None, win->pf.handle, 0, 0, 0, 0, x, y);
 	XFlush(win->pf.display);
+}
+
+void native_get_required_instance_exts(char** exts)
+{
+	exts[0] = "VK_KHR_surface";
+	exts[1] = "VK_KHR_xlib_surface";
+}
+
+VkResult native_create_vulkan_surface(VkInstance instance, window* win, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface)
+{
+	VkResult res;
+	VkXlibSurfaceCreateInfoKHR create_info;
+	PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
+
+	vkCreateXlibSurfaceKHR = (PFN_vkCreateXlibSurfaceKHR)
+		vkGetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR");
+	if (!vkCreateXlibSurfaceKHR)
+	{
+		/* missing VK_KHR_xlib_surface extension */
+	}
+
+	memset(&create_info, 0, sizeof(create_info));
+	create_info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	create_info.dpy = win->pf.display;
+	create_info.window = win->pf.handle;
+
+	res = vkCreateXlibSurfaceKHR(instance, &create_info, allocator, surface);
+	if (res)
+	{
+		/* failed to create surface */
+	}
+
+	return res;
 }
 
 static void process_event(window* win, XEvent* xevent)
