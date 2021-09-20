@@ -20,6 +20,6 @@ void native_get_cursor_pos(window* win, int* x, int* y);
 void native_set_cursor_pos(window* win, int x, int y);
 
 void native_get_required_instance_exts(char** exts);
-VkResult native_create_vulkan_surface(VkInstance, window* win,
+VkResult native_create_vulkan_surface(VkInstance instance, window* win,
 	const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 #endif
