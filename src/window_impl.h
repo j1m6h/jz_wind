@@ -12,6 +12,6 @@ typedef struct x11_window platform;
 #endif
 #ifdef JZ_SYS_WIN32
 #include "platform/win32_native.h"
-typedef struct win32_window platform;
+typedef struct win32_native platform;
 #endif
 #endif
