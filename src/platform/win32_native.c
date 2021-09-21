@@ -1,3 +1,5 @@
+#include "../config.h"
+#include "../input.h"
 #include "../natives.h"
 #include "../window.h"
 #include "../../inc/jz_wind.h"
@@ -31,7 +33,7 @@ void native_create_window(window* win)
 	}
 
 	win->pf.handle = CreateWindowEx(0, "Joszva_Window", "Joszva_Window", 
-		WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFUALT, CW_USEDEFAULT, 
+		WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 
 		CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, GetModuleHandle(NULL), NULL);
 
 	UpdateWindow(win->pf.handle);
@@ -40,8 +42,6 @@ void native_create_window(window* win)
 void native_destroy_window(window* win)
 {
 	DestroyWindow(win->pf.handle);
-	free(_win);
-	_win = (window*)0;
 }
 
 void native_show_window(window* win)
@@ -59,7 +59,6 @@ void native_hide_window(window* win)
 void native_set_window_title(window* win, const char* title)
 {
 	SetWindowText(win->pf.handle, title);
-	win->pf.title = title;
 }
 
 void native_set_window_size(window* win, int width, int height)
@@ -69,7 +68,6 @@ void native_set_window_size(window* win, int width, int height)
 void native_poll_events(window* win)
 {
 	MSG msg;
-
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&msg);
@@ -91,17 +89,47 @@ void native_set_cursor_pos(window* win, int x, int y)
 
 void native_get_required_instance_exts(char** exts)
 {
+	exts[0] = "VK_KHR_surface";
+	exts[1] = "VK_KHR_win32_surface";
 }
 
 VkResult native_create_vulkan_surface(VkInstance instance, window* win, 
 	const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface)
 {
+	VkResult res;
+	VkWin32SurfaceCreateInfoKHR create_info;
+	PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
+
+	vkCreateWin32SurfaceKHR = (PFN_vkCreateWin32SurfaceKHR)
+		vkGetInstanceProcAddr(instance, "vkCreateWin32SurfaceKHR");
+	if (!vkCreateWin32SurfaceKHR)
+	{
+		/* missing VK_KHR_win32_surface extension */
+	}
+
+	memset(&create_info, 0, sizeof(create_info));
+	create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	create_info.hwnd = win->pf.handle;
+	create_info.hinstance = GetModuleHandle((LPCSTR)0);
+
+	res = vkCreateWin32SurfaceKHR(instance, &create_info, allocator, surface);
+	if (res)
+	{
+		/* failed to create surface */
+	}
+
+	return res;
 }
 
 static LRESULT CALLBACK win_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	switch (msg)
 	{
+		case WM_DESTROY:
+		{
+			input_window_close_req(_win);
+			break;
+		}
 		case WM_LBUTTONDOWN:
 		{
 			input_mouse_click(_win, MOUSE_BTN_LEFT, ACTION_PRESSED);
