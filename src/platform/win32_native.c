@@ -3,7 +3,8 @@
 #include "../natives.h"
 #include "../window.h"
 #include "../../inc/jz_wind.h"
-
+/* similar to vulkan_xlib.h, I would assume Windows.h 
+ * needs to be included before vulkan_win32.h as well */
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_win32.h>
 
@@ -63,6 +64,8 @@ void native_set_window_title(window* win, const char* title)
 
 void native_set_window_size(window* win, int width, int height)
 {
+	RECT rect = { 0, 0, width, height };
+	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW | WS_VISIBLE, FALSE, 0);
 }
 
 void native_poll_events(window* win)

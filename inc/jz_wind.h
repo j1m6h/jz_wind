@@ -10,7 +10,6 @@ typedef struct window window; typedef void (*keyboard_callback)(window* win, int
 typedef void (*mouse_callback)(window* win, int btn, int action);
 typedef void (*window_close_callback)(window* win);
 
-/* just a little sugar (: */
 #define JZ_TRUE 1
 #define JZ_FALSE 0
 
