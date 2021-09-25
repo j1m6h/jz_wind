@@ -24,6 +24,18 @@ void input_mouse_click(window* win, int btn, int action)
 		win->callbacks.mouse_btn(win, btn, action);
 }
 
+void input_cursor_pos(window* win, int x, int y)
+{
+	if (win->callbacks.cursor_pos)
+		win->callbacks.cursor_pos(win, x, y);
+}
+
+void input_cursor_enter(window* win, int enter)
+{
+	if (win->callbacks.cursor_enter)
+		win->callbacks.cursor_enter(win, enter);
+}
+
 void input_window_close_req(window* win)
 {
 	win->is_open = JZ_FALSE;

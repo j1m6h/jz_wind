@@ -6,8 +6,12 @@
 #include <vulkan/vulkan.h>
 #endif
 
-typedef struct window window; typedef void (*keyboard_callback)(window* win, int key, int action);
+typedef struct window window; 
+
+typedef void (*keyboard_callback)(window* win, int key, int action);
 typedef void (*mouse_callback)(window* win, int btn, int action);
+typedef void (*cursor_pos_callback)(window* win, int x, int y);
+typedef void (*cursor_enter_callback)(window* win, int enter);
 typedef void (*window_close_callback)(window* win);
 
 #define JZ_TRUE 1

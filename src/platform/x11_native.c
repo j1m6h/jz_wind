@@ -198,6 +198,23 @@ static void process_event(window* win, XEvent* xevent)
 				input_mouse_click(win, MOUSE_BTN_RIGHT, ACTION_RELEASED);
 			break;
 		}
+		case MotionNotify:
+		{
+			const int x = xevent->xmotion.x;
+			const int y = xevent->xmotion.y;
+			input_cursor_pos(win, x, y);
+			break;
+		}
+		case EnterNotify:
+		{
+			input_cursor_enter(win, 1);
+			break;
+		}
+		case LeaveNotify:
+		{
+			input_cursor_enter(win, 0);
+			break;
+		}
 		default:
 		{
 			break;
