@@ -18,6 +18,7 @@ struct window
 		mouse_callback mouse_btn;
 		cursor_pos_callback cursor_pos;
 		cursor_enter_callback cursor_enter;
+		window_size_callback win_size;
 		window_close_callback close;
 	} callbacks;
 };

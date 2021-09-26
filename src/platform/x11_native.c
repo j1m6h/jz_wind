@@ -148,6 +148,15 @@ static void process_event(window* win, XEvent* xevent)
 				input_window_close_req(win);
 			break;
 		}
+		case ConfigureNotify:
+		{
+			const int x = xevent->xconfigure.x;
+			const int y = xevent->xconfigure.y;
+			const int width = xevent->xconfigure.width;
+			const int height = xevent->xconfigure.height;
+			input_window_size(win, x, y, width, height);
+			break;
+		}
 		case KeyPress:
 		{
 			KeySym sym = XLookupKeysym(&xevent->xkey, 1);

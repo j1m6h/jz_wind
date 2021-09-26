@@ -36,6 +36,12 @@ void input_cursor_enter(window* win, int enter)
 		win->callbacks.cursor_enter(win, enter);
 }
 
+void input_window_size(window* win, int x, int y, int width, int height)
+{
+	if (win->callbacks.win_size)
+		win->callbacks.win_size(win, x, y, width, height);
+}
+
 void input_window_close_req(window* win)
 {
 	win->is_open = JZ_FALSE;

@@ -6,16 +6,32 @@
 #include <vulkan/vulkan.h>
 #endif
 
-typedef struct window window; 
+#define JZ_TRUE 1
+#define JZ_FALSE 0
+
+typedef struct window window;
 
 typedef void (*keyboard_callback)(window* win, int key, int action);
 typedef void (*mouse_callback)(window* win, int btn, int action);
 typedef void (*cursor_pos_callback)(window* win, int x, int y);
 typedef void (*cursor_enter_callback)(window* win, int enter);
+typedef void (*window_size_callback)(window* win, int x, int y, int width, int height);
 typedef void (*window_close_callback)(window* win);
 
-#define JZ_TRUE 1
-#define JZ_FALSE 0
+/* actions, used to detect key and mouse btn state */
+enum actions
+{
+	ACTION_PRESSED,
+	ACTION_RELEASED
+}; 
+
+/* mouse btns */
+enum mouse
+{
+	MOUSE_BTN_LEFT,
+	MOUSE_BTN_MIDDLE,
+	MOUSE_BTN_RIGHT
+};
 
 /* keyboard keys */
 enum keyboard
@@ -36,22 +52,7 @@ enum keyboard
 	KEY_COMMA, KEY_QUOTE, KEY_BACKSPACE, KEY_LBRACKET, KEY_RBRACKET,
 	KEY_SLASH, KEY_BACKSLASH, KEY_SEMICOLON, KEY_HYPHEN, KEY_EQUAL,
 	KEY_MENU, KEY_TILDE, KEY_UNKNOWN
-};
-
-/* mouse btns */
-enum mouse
-{
-	MOUSE_BTN_LEFT,
-	MOUSE_BTN_MIDDLE,
-	MOUSE_BTN_RIGHT
-};
-
-/* actions, used to detect key and mouse btn state */
-enum actions
-{
-	ACTION_PRESSED,
-	ACTION_RELEASED
-};
+}; 
 
 window* create_window(const char* title, int width, int height);
 int window_is_open(window* win);
@@ -74,7 +75,11 @@ VkResult create_vulkan_surface(VkInstance instance, window* win,
 	const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 #endif
 
-/* allow the user to handle event input */
+/* set event callbacks */
 keyboard_callback set_keyboard_callback(window* win, keyboard_callback callback);
 mouse_callback set_mouse_callback(window* win, mouse_callback callback);
+cursor_pos_callback set_cursor_pos_callback(window* win, int x, int y);
+cursor_enter_callback set_cursor_enter_callback(window* win, int enter);
+window_size_callback set_window_size_callback(window* win, int x, int y, int width, int height);
+window_close_callback set_window_close_callback(window* win);
 #endif
