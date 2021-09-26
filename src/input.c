@@ -91,6 +91,6 @@ window_size_callback set_window_size_callback(window* win, window_size_callback 
 
 window_close_callback set_window_close_callback(window* win, window_close_callback callback)
 {
-	SWAP_POINTERS(win->callbacks.win_close, callback);
+	SWAP_POINTERS(win->callbacks.close, callback);
 	return callback;
 }
