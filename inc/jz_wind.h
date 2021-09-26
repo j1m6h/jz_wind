@@ -78,8 +78,8 @@ VkResult create_vulkan_surface(VkInstance instance, window* win,
 /* set event callbacks */
 keyboard_callback set_keyboard_callback(window* win, keyboard_callback callback);
 mouse_callback set_mouse_callback(window* win, mouse_callback callback);
-cursor_pos_callback set_cursor_pos_callback(window* win, int x, int y);
-cursor_enter_callback set_cursor_enter_callback(window* win, int enter);
-window_size_callback set_window_size_callback(window* win, int x, int y, int width, int height);
-window_close_callback set_window_close_callback(window* win);
+cursor_pos_callback set_cursor_pos_callback(window* win, cursor_pos_callback callback);
+cursor_enter_callback set_cursor_enter_callback(window* win cursor_enter_callback callback);
+window_size_callback set_window_size_callback(window* win, window_size_callback callback);
+window_close_callback set_window_close_callback(window* win, window_close_callback callback);
 #endif

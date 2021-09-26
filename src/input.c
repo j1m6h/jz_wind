@@ -70,3 +70,27 @@ mouse_callback set_mouse_callback(window* win, mouse_callback callback)
 	SWAP_POINTERS(win->callbacks.mouse_btn, callback);
 	return callback;
 }
+
+cursor_pos_callback set_cursor_pos_callback(window* win, cursor_pos_callback callback)
+{
+	SWAP_POINTERS(win->callbacks.cursor_pos, callback);
+	return callback;
+}
+
+cursor_enter_callback set_cursor_enter_callback(window* win, cursor_enter_callback callback)
+{
+	SWAP_POINTERS(win->callbacks.cursor_enter, callback);
+	return callback;
+}
+
+window_size_callback set_window_size_callback(window* win, window_size_callback callback)
+{
+	SWAP_POINTERS(win->callbacks.size, callback);
+	return callback;
+}
+
+window_close_callback set_window_close_callback(window* win, window_close_callback callback)
+{
+	SWAP_POINTERS(win->callbacks.win_close, callback);
+	return callback;
+}
