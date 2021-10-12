@@ -1,4 +1,4 @@
-#Why this one?
+# Why this one?
 The idea behind this project was to make a simpler version of GLFW. One major difference compared to GLFW is this library doesn't include any built in OpenGL support.
 This library will provide basic functions needed to get a vulkan window up and running, with no by default OpenGL support. I really believe that the more minimal the library 
 is the better it will be. So this is a personal project I developed to have nothing more than a bare bones window, with a few integrated vulkan functions.
