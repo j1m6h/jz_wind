@@ -1,5 +1,4 @@
 #include <string.h>
-#include <malloc.h>
 #include "natives.h"
 #include "window.h"
 

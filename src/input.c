@@ -38,8 +38,8 @@ void input_cursor_enter(window* win, int enter)
 
 void input_window_size(window* win, int x, int y, int width, int height)
 {
-	if (win->callbacks.win_size)
-		win->callbacks.win_size(win, x, y, width, height);
+	if (win->callbacks.size)
+		win->callbacks.size(win, x, y, width, height);
 }
 
 void input_window_close_req(window* win)

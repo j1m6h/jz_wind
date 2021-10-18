@@ -366,11 +366,11 @@ const int keysym_to_key(KeySym sym)
 		case XK_Home: return KEY_HOME;
 		case XK_End: return KEY_END;
 		case XK_Pause: return KEY_PAUSE;
-		case XK_Page_Up: return KEY_PAGEUP:
+		case XK_Page_Up: return KEY_PAGEUP;
 		case XK_Page_Down: return KEY_PAGEDOWN;
 		case XK_period: return KEY_PERIOD;
 		case XK_comma: return KEY_COMMA;
-		case XK_apostraphe: return KEY_QUOTE;
+		case XK_apostrophe: return KEY_QUOTE;
 		case XK_BackSpace: return KEY_BACKSPACE;
 		case XK_bracketleft: return KEY_LBRACKET;
 		case XK_bracketright: return KEY_RBRACKET;
