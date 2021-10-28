@@ -4,7 +4,6 @@ This library will provide basic functions needed to get a vulkan window up and r
 is the better it will be. So this is a personal project I developed to have nothing more than a bare bones window, with a few integrated vulkan functions.
 
 # How to compile
-This library uses CMake as its build system, yes it's not needed but it's what is used. Other than that there are no dependencies other than X11 or Win32, and of course git if you chose.
 	
 	# Unix
 	1. git clone https://github.com/joshuamatthewhagen/jz_wind
